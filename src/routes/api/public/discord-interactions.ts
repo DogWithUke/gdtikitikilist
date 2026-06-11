@@ -44,7 +44,14 @@ async function verifySignature(
 function json(payload: unknown, status = 200): Response {
   return new Response(JSON.stringify(payload), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+  });
+}
+
+function ephemeralMessage(content: string): Response {
+  return json({
+    type: CHANNEL_MESSAGE_WITH_SOURCE,
+    data: { content, flags: EPHEMERAL },
   });
 }
 
@@ -204,10 +211,10 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
     handlers: {
       POST: async ({ request }) => {
         const publicKey = process.env.DISCORD_PUBLIC_KEY;
-        const botToken = process.env.DISCORD_BOT_TOKEN;
-        const applicationId = process.env.DISCORD_APPLICATION_ID;
-        if (!publicKey || !botToken || !applicationId)
+        if (!publicKey) {
+          console.error("discord interactions missing DISCORD_PUBLIC_KEY");
           return new Response("Server misconfigured", { status: 500 });
+        }
 
         const signature = request.headers.get("x-signature-ed25519");
         const timestamp = request.headers.get("x-signature-timestamp");
@@ -216,15 +223,25 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
           return new Response("Missing signature", { status: 401 });
         }
         const valid = await verifySignature(publicKey, signature, timestamp, body);
-        if (!valid) return new Response("Invalid signature", { status: 401 });
+        if (!valid) {
+          console.error("discord interactions invalid signature");
+          return new Response("Invalid signature", { status: 401 });
+        }
 
-        const interaction = JSON.parse(body) as {
+        let interaction: {
           type: number;
+          application_id?: string;
           token: string;
           data?: { custom_id?: string };
           member?: { user?: { id: string; username: string } };
           user?: { id: string; username: string };
         };
+        try {
+          interaction = JSON.parse(body);
+        } catch (e) {
+          console.error("discord interactions invalid json", e);
+          return new Response("Invalid JSON", { status: 400 });
+        }
 
         if (interaction.type === PING) {
           return json({ type: PONG });
@@ -238,10 +255,18 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             interaction.user ?? { id: "unknown", username: "unknown" };
 
           if ((action !== "approve" && action !== "reject") || !submissionId) {
-            return json({
-              type: CHANNEL_MESSAGE_WITH_SOURCE,
-              data: { content: "Invalid action.", flags: EPHEMERAL },
+            return ephemeralMessage("Invalid action.");
+          }
+
+          const applicationId = interaction.application_id ?? process.env.DISCORD_APPLICATION_ID;
+          const botToken = process.env.DISCORD_BOT_TOKEN;
+
+          if (!applicationId || !botToken) {
+            console.error("discord interactions missing follow-up config", {
+              hasApplicationId: Boolean(applicationId),
+              hasBotToken: Boolean(botToken),
             });
+            return ephemeralMessage("Bot moderation is not configured yet.");
           }
 
           // Fire-and-forget the heavy work; ack immediately so Discord doesn't time out.
