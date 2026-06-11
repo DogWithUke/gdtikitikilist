@@ -233,9 +233,7 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
           const customId = interaction.data?.custom_id ?? "";
           const [action, submissionId] = customId.split(":");
           const moderator =
-            interaction.member?.user ??
-            interaction.user ??
-            { id: "unknown", username: "unknown" };
+            interaction.member?.user ?? interaction.user ?? { id: "unknown", username: "unknown" };
 
           if ((action !== "approve" && action !== "reject") || !submissionId) {
             return ephemeralMessage("Invalid action.");
