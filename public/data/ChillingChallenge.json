@@ -1,0 +1,24 @@
+{
+    "id": 142118974,
+    "name": "Chilling Challenge",
+    "author": "Artec",
+    "creators": ["Artec"],
+    "verifier": "Artec",
+    "verification": "https://youtu.be/cedzmdc16-U",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/Pb6BVYQAPbQ",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRPAT8hJ74crREer9?invite=cr-MSwyaXEsMzg2Mzc3NzM0&v=32",
+            "percent": 100,
+            "hz": 200
+        }
+    ]
+}

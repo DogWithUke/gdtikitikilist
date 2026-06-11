@@ -1,0 +1,36 @@
+{
+    "id": 141878133,
+    "name": "Operation",
+    "author": "leoemegrit",
+    "creators": ["leoemegrit"],
+    "verifier": "Termy",
+    "verification": "https://www.youtube.com/watch?v=hyc8rCaaGR8",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=EJttjb88xhk",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mQxVNlPxi4QcHQH89?invite=cr-MSxrUkksMzg2Mzc3NzM0&v=71",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "Danielo",
+            "link": "https://www.youtube.com/watch?v=a_YKFqNUQaU",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Salad",
+            "link": "https://www.youtube.com/watch?v=lZmeMoziiYs",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

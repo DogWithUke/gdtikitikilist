@@ -10,33 +10,103 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicSubmitRouteImport } from './routes/api/public/submit'
+import { Route as ApiPublicRecordsRouteImport } from './routes/api/public/records'
+import { Route as ApiPublicRecentAcceptedRouteImport } from './routes/api/public/recent-accepted'
+import { Route as ApiPublicMySubmissionsRouteImport } from './routes/api/public/my-submissions'
+import { Route as ApiPublicDiscordInteractionsRouteImport } from './routes/api/public/discord-interactions'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSubmitRoute = ApiPublicSubmitRouteImport.update({
+  id: '/api/public/submit',
+  path: '/api/public/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRecordsRoute = ApiPublicRecordsRouteImport.update({
+  id: '/api/public/records',
+  path: '/api/public/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRecentAcceptedRoute = ApiPublicRecentAcceptedRouteImport.update({
+  id: '/api/public/recent-accepted',
+  path: '/api/public/recent-accepted',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMySubmissionsRoute = ApiPublicMySubmissionsRouteImport.update({
+  id: '/api/public/my-submissions',
+  path: '/api/public/my-submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDiscordInteractionsRoute =
+  ApiPublicDiscordInteractionsRouteImport.update({
+    id: '/api/public/discord-interactions',
+    path: '/api/public/discord-interactions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
+  '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
+  '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
+  '/api/public/records': typeof ApiPublicRecordsRoute
+  '/api/public/submit': typeof ApiPublicSubmitRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
+  '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
+  '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
+  '/api/public/records': typeof ApiPublicRecordsRoute
+  '/api/public/submit': typeof ApiPublicSubmitRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
+  '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
+  '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
+  '/api/public/records': typeof ApiPublicRecordsRoute
+  '/api/public/submit': typeof ApiPublicSubmitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/api/public/discord-interactions'
+    | '/api/public/my-submissions'
+    | '/api/public/recent-accepted'
+    | '/api/public/records'
+    | '/api/public/submit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/api/public/discord-interactions'
+    | '/api/public/my-submissions'
+    | '/api/public/recent-accepted'
+    | '/api/public/records'
+    | '/api/public/submit'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/public/discord-interactions'
+    | '/api/public/my-submissions'
+    | '/api/public/recent-accepted'
+    | '/api/public/records'
+    | '/api/public/submit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicDiscordInteractionsRoute: typeof ApiPublicDiscordInteractionsRoute
+  ApiPublicMySubmissionsRoute: typeof ApiPublicMySubmissionsRoute
+  ApiPublicRecentAcceptedRoute: typeof ApiPublicRecentAcceptedRoute
+  ApiPublicRecordsRoute: typeof ApiPublicRecordsRoute
+  ApiPublicSubmitRoute: typeof ApiPublicSubmitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +118,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/submit': {
+      id: '/api/public/submit'
+      path: '/api/public/submit'
+      fullPath: '/api/public/submit'
+      preLoaderRoute: typeof ApiPublicSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/records': {
+      id: '/api/public/records'
+      path: '/api/public/records'
+      fullPath: '/api/public/records'
+      preLoaderRoute: typeof ApiPublicRecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/recent-accepted': {
+      id: '/api/public/recent-accepted'
+      path: '/api/public/recent-accepted'
+      fullPath: '/api/public/recent-accepted'
+      preLoaderRoute: typeof ApiPublicRecentAcceptedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/my-submissions': {
+      id: '/api/public/my-submissions'
+      path: '/api/public/my-submissions'
+      fullPath: '/api/public/my-submissions'
+      preLoaderRoute: typeof ApiPublicMySubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/discord-interactions': {
+      id: '/api/public/discord-interactions'
+      path: '/api/public/discord-interactions'
+      fullPath: '/api/public/discord-interactions'
+      preLoaderRoute: typeof ApiPublicDiscordInteractionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicDiscordInteractionsRoute: ApiPublicDiscordInteractionsRoute,
+  ApiPublicMySubmissionsRoute: ApiPublicMySubmissionsRoute,
+  ApiPublicRecentAcceptedRoute: ApiPublicRecentAcceptedRoute,
+  ApiPublicRecordsRoute: ApiPublicRecordsRoute,
+  ApiPublicSubmitRoute: ApiPublicSubmitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

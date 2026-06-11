@@ -1,0 +1,72 @@
+{
+    "id": 141937544,
+    "name": "oil",
+    "author": "payloooad",
+    "creators": ["payloooad"],
+    "verifier": "payloooad",
+    "verification": "https://youtu.be/zVvYN7Jj5Ps",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/oWabqeGnC-A",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "eistee_king1234",
+            "link": "https://youtube.com/shorts/A4bWIG6iic0?si=TD9KeDzLWhj1OMi-",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Termy",
+            "link": "https://www.youtube.com/watch?v=e7Sl75FesJU",
+            "percent": 100,
+            "hz": 240
+        },
+         {
+            "user": "kurtiscoool",
+            "link": "https://www.youtube.com/watch?v=EAEvuZPeDII",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "jeremyballerton",
+            "link": "https://www.youtube.com/watch?v=Q3mOwC5xptY",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://www.youtube.com/watch?v=tod3EeaEbg4",
+            "percent": 100,
+            "hz": 120
+        },
+        {
+            "user": "4genesis",
+            "link": "https://www.youtube.com/watch?v=vvW4dBmga9Q",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Myszon12",
+            "link": "https://youtu.be/-hI_QQl4pxk",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

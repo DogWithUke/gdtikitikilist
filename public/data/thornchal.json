@@ -1,0 +1,42 @@
+{
+    "id": 141934297,
+    "name": "Thorn Challenge ig",
+    "author": "valter0123",
+    "creators": ["valter0123"],
+    "verifier": "ak4c",
+    "verification": "https://youtu.be/ZjyJKF2YUe0",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Termy",
+            "link": "https://www.youtube.com/watch?v=W7PLWji4fVY",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "rRtiP0",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRQd0BhBmaBj8lqzT?invite=cr-MSwwMjEsNTEzOTM3ODA5",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRP7swJOKwex0wlW4?invite=cr-MSwxZ2QsMzg2Mzc3NzM0&v=25",
+            "percent": 100,
+            "hz": 200
+        }
+    ]
+}
