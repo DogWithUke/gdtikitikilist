@@ -9,6 +9,7 @@ const MESSAGE_COMPONENT = 3;
 const PONG = 1;
 const CHANNEL_MESSAGE_WITH_SOURCE = 4;
 const DEFERRED_UPDATE_MESSAGE = 6;
+const UPDATE_MESSAGE = 7;
 const EPHEMERAL = 1 << 6;
 
 const ACCEPTED_CHANNEL_ID = "1514190580450725890";
@@ -133,22 +134,21 @@ async function postToChannel(
     },
   );
   if (!res.ok) {
-    console.error("discord post failed", channelId, res.status, await res.text());
-    return null;
+    const errorText = await res.text();
+    console.error("discord post failed", channelId, res.status, errorText);
+    throw new Error(`Discord post failed with status ${res.status}`);
   }
   const msg = (await res.json()) as { id: string };
   return msg.id;
 }
 
 async function processToggle(params: {
-  applicationId: string;
   botToken: string;
-  interactionToken: string;
   submissionId: string;
   action: "approve" | "reject";
   moderator: { id: string; username: string };
 }) {
-  const { applicationId, botToken, interactionToken, submissionId, action, moderator } = params;
+  const { botToken, submissionId, action, moderator } = params;
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: sub, error: fetchErr } = await supabaseAdmin
@@ -158,15 +158,10 @@ async function processToggle(params: {
       .single();
 
     if (fetchErr || !sub) {
-      await fetch(
-        `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: "Submission not found.", components: [] }),
-        },
-      );
-      return;
+      return {
+        type: CHANNEL_MESSAGE_WITH_SOURCE,
+        data: { content: "Submission not found.", flags: EPHEMERAL },
+      };
     }
 
     const newStatus: "accepted" | "rejected" =
@@ -188,21 +183,23 @@ async function processToggle(params: {
       })
       .eq("id", submissionId);
 
-    // Edit the original interaction message
-    await fetch(
-      `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: `Moved to <#${targetChannel}> — ${newStatus} by <@${moderator.id}>`,
-          embeds: [buildEmbed(sub as Submission, newStatus, moderator)],
-          components: [],
-        }),
+    return {
+      type: UPDATE_MESSAGE,
+      data: {
+        content: `Moved to <#${targetChannel}> — ${newStatus} by <@${moderator.id}>`,
+        embeds: [buildEmbed(sub as Submission, newStatus, moderator)],
+        components: [],
       },
-    );
+    };
   } catch (e) {
     console.error("processToggle error", e);
+    return {
+      type: CHANNEL_MESSAGE_WITH_SOURCE,
+      data: {
+        content: "Could not update this submission. Please try again.",
+        flags: EPHEMERAL,
+      },
+    };
   }
 }
 
@@ -258,28 +255,23 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             return ephemeralMessage("Invalid action.");
           }
 
-          const applicationId = interaction.application_id ?? process.env.DISCORD_APPLICATION_ID;
           const botToken = process.env.DISCORD_BOT_TOKEN;
 
-          if (!applicationId || !botToken) {
+          if (!botToken) {
             console.error("discord interactions missing follow-up config", {
-              hasApplicationId: Boolean(applicationId),
               hasBotToken: Boolean(botToken),
             });
             return ephemeralMessage("Bot moderation is not configured yet.");
           }
 
-          // Fire-and-forget the heavy work; ack immediately so Discord doesn't time out.
-          void processToggle({
-            applicationId,
+          const responsePayload = await processToggle({
             botToken,
-            interactionToken: interaction.token,
             submissionId,
             action: action as "approve" | "reject",
             moderator,
           });
 
-          return json({ type: DEFERRED_UPDATE_MESSAGE });
+          return json(responsePayload);
         }
 
         if (interaction.type === APPLICATION_COMMAND) {
