@@ -1,19 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { verifyAsync } from "@noble/ed25519";
-import { sha512 } from "@noble/hashes/sha2";
-import { etc } from "@noble/ed25519";
 
-// @noble/ed25519 v3 needs a sha512 hook
-etc.sha512Async = async (...m: Uint8Array[]) => {
-  const h = sha512.create();
-  for (const part of m) h.update(part);
-  return h.digest();
-};
-etc.sha512Sync = (...m: Uint8Array[]) => {
-  const h = sha512.create();
-  for (const part of m) h.update(part);
-  return h.digest();
-};
 
 const PING = 1;
 const APPLICATION_COMMAND = 2;
