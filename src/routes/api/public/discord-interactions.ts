@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { verifyAsync } from "@noble/ed25519";
 
-// Discord interaction types / response types
+
 const PING = 1;
 const APPLICATION_COMMAND = 2;
 const MESSAGE_COMPONENT = 3;
 
 const PONG = 1;
 const CHANNEL_MESSAGE_WITH_SOURCE = 4;
-const UPDATE_MESSAGE = 7;
+const DEFERRED_UPDATE_MESSAGE = 6;
 const EPHEMERAL = 1 << 6;
 
-// Destination channels for moderation toggling
 const ACCEPTED_CHANNEL_ID = "1514190580450725890";
 const REJECTED_CHANNEL_ID = "1514207386510819328";
 
@@ -29,19 +29,11 @@ async function verifySignature(
   body: string,
 ): Promise<boolean> {
   try {
-    const key = await crypto.subtle.importKey(
-      "raw",
-      hexToBytes(publicKeyHex) as BufferSource,
-      { name: "Ed25519" },
-      false,
-      ["verify"],
-    );
     const message = new TextEncoder().encode(timestamp + body);
-    return await crypto.subtle.verify(
-      "Ed25519",
-      key,
-      hexToBytes(signatureHex) as BufferSource,
-      message as BufferSource,
+    return await verifyAsync(
+      hexToBytes(signatureHex),
+      message,
+      hexToBytes(publicKeyHex),
     );
   } catch (e) {
     console.error("verify error", e);
@@ -97,18 +89,12 @@ function buildEmbed(
 }
 
 function buildToggleComponents(status: "accepted" | "rejected", id: string) {
-  // In the accepted channel, allow Reject. In the rejected channel, allow Accept.
   if (status === "accepted") {
     return [
       {
         type: 1,
         components: [
-          {
-            type: 2,
-            style: 4, // red
-            label: "Reject",
-            custom_id: `reject:${id}`,
-          },
+          { type: 2, style: 4, label: "Reject", custom_id: `reject:${id}` },
         ],
       },
     ];
@@ -117,12 +103,7 @@ function buildToggleComponents(status: "accepted" | "rejected", id: string) {
     {
       type: 1,
       components: [
-        {
-          type: 2,
-          style: 3, // green
-          label: "Accept",
-          custom_id: `approve:${id}`,
-        },
+        { type: 2, style: 3, label: "Accept", custom_id: `approve:${id}` },
       ],
     },
   ];
@@ -152,13 +133,80 @@ async function postToChannel(
   return msg.id;
 }
 
+async function processToggle(params: {
+  applicationId: string;
+  botToken: string;
+  interactionToken: string;
+  submissionId: string;
+  action: "approve" | "reject";
+  moderator: { id: string; username: string };
+}) {
+  const { applicationId, botToken, interactionToken, submissionId, action, moderator } = params;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: sub, error: fetchErr } = await supabaseAdmin
+      .from("submissions")
+      .select("*")
+      .eq("id", submissionId)
+      .single();
+
+    if (fetchErr || !sub) {
+      await fetch(
+        `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: "Submission not found.", components: [] }),
+        },
+      );
+      return;
+    }
+
+    const newStatus: "accepted" | "rejected" =
+      action === "approve" ? "accepted" : "rejected";
+    const targetChannel =
+      newStatus === "accepted" ? ACCEPTED_CHANNEL_ID : REJECTED_CHANNEL_ID;
+
+    const newMessageId = await postToChannel(botToken, targetChannel, {
+      embeds: [buildEmbed(sub as Submission, newStatus, moderator)],
+      components: buildToggleComponents(newStatus, sub.id),
+    });
+
+    await supabaseAdmin
+      .from("submissions")
+      .update({
+        status: newStatus,
+        reviewed_at: new Date().toISOString(),
+        discord_message_id: newMessageId ?? sub.discord_message_id,
+      })
+      .eq("id", submissionId);
+
+    // Edit the original interaction message
+    await fetch(
+      `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: `Moved to <#${targetChannel}> — ${newStatus} by <@${moderator.id}>`,
+          embeds: [buildEmbed(sub as Submission, newStatus, moderator)],
+          components: [],
+        }),
+      },
+    );
+  } catch (e) {
+    console.error("processToggle error", e);
+  }
+}
+
 export const Route = createFileRoute("/api/public/discord-interactions")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const publicKey = process.env.DISCORD_PUBLIC_KEY;
         const botToken = process.env.DISCORD_BOT_TOKEN;
-        if (!publicKey || !botToken)
+        const applicationId = process.env.DISCORD_APPLICATION_ID;
+        if (!publicKey || !botToken || !applicationId)
           return new Response("Server misconfigured", { status: 500 });
 
         const signature = request.headers.get("x-signature-ed25519");
@@ -172,6 +220,7 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
 
         const interaction = JSON.parse(body) as {
           type: number;
+          token: string;
           data?: { custom_id?: string };
           member?: { user?: { id: string; username: string } };
           user?: { id: string; username: string };
@@ -195,57 +244,17 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             });
           }
 
-          const { supabaseAdmin } = await import(
-            "@/integrations/supabase/client.server"
-          );
-          const { data: sub, error: fetchErr } = await supabaseAdmin
-            .from("submissions")
-            .select("*")
-            .eq("id", submissionId)
-            .single();
-
-          if (fetchErr || !sub) {
-            return json({
-              type: CHANNEL_MESSAGE_WITH_SOURCE,
-              data: { content: "Submission not found.", flags: EPHEMERAL },
-            });
-          }
-
-          const newStatus: "accepted" | "rejected" =
-            action === "approve" ? "accepted" : "rejected";
-
-          // Post new message to target channel with the opposite-action button
-          const targetChannel =
-            newStatus === "accepted" ? ACCEPTED_CHANNEL_ID : REJECTED_CHANNEL_ID;
-
-          const newMessageId = await postToChannel(botToken, targetChannel, {
-            embeds: [buildEmbed(sub as Submission, newStatus, moderator)],
-            components: buildToggleComponents(newStatus, sub.id),
+          // Fire-and-forget the heavy work; ack immediately so Discord doesn't time out.
+          void processToggle({
+            applicationId,
+            botToken,
+            interactionToken: interaction.token,
+            submissionId,
+            action: action as "approve" | "reject",
+            moderator,
           });
 
-          // Update DB: status, reviewed_at, and new message id (so future toggles target it)
-          const { error: updErr } = await supabaseAdmin
-            .from("submissions")
-            .update({
-              status: newStatus,
-              reviewed_at: new Date().toISOString(),
-              discord_message_id: newMessageId ?? sub.discord_message_id,
-            })
-            .eq("id", submissionId);
-
-          if (updErr) {
-            console.error("update error", updErr);
-          }
-
-          // Replace the original message: strip buttons, show audit trail.
-          return json({
-            type: UPDATE_MESSAGE,
-            data: {
-              content: `Moved to <#${targetChannel}> — ${newStatus} by <@${moderator.id}>`,
-              embeds: [buildEmbed(sub as Submission, newStatus, moderator)],
-              components: [],
-            },
-          });
+          return json({ type: DEFERRED_UPDATE_MESSAGE });
         }
 
         if (interaction.type === APPLICATION_COMMAND) {
