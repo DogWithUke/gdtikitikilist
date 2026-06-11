@@ -1,0 +1,42 @@
+{
+    "id": 142020218,
+    "name": "Celestial",
+    "author": "Akaneeee",
+    "creators": ["Akaneeee"],
+    "verifier": "Salad",
+    "verification": "https://youtu.be/12pbHjw6wqs",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/UFNLiRZoRx4",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "rRtiP0",
+            "link": "https://medal.tv/games/geometry-dash/clips/mSgb5WDJhPxe2bR2J?invite=cr-MSw5YWMsNTEzOTM3ODA5",
+            "percent": 100,
+            "hz": 240  
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRQ3zbCt8U4qy25B0?invite=cr-MSwzT1MsMzg2Mzc3NzM0&v=31",
+            "percent": 100,
+            "hz": 200
+        }
+    ]
+}

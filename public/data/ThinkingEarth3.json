@@ -1,0 +1,24 @@
+{
+    "id": 141990078,
+    "name": "thinking earth 3",
+    "author": "Myszon12",
+    "creators": ["Myszon12"],
+    "verifier": "Myszon12",
+    "verification": "https://youtu.be/gyvZO9XbCX4",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRLYBKJMng9a6ocAA?invite=cr-MSxNQ2wsMzg2Mzc3NzM0&v=31",
+            "percent": 100,
+            "hz": 200
+        },     
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/o6Dfl5X0B_c",
+            "percent": 100,
+            "hz": 240
+        } 
+    ]
+}

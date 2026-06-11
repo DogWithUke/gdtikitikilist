@@ -1,0 +1,48 @@
+{
+    "id": 141953754,
+    "name": "Termy is a femboy",
+    "author": "Pablo",
+    "creators": ["Pablo"],
+    "verifier": "Pablo",
+    "verification": "https://youtu.be/oanZqgdmTMM?is=klXArmA1CluRMGWL",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/YXBiU-OO3DY",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Termy",
+            "link": "https://www.youtube.com/watch?v=6dOWwtIJEn4",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "rRtiP0",
+            "link": "https://medal.tv/games/geometry-dash/clips/mR74mNVMrCi2Jqwqp?invite=cr-MSxianUsNTEzOTM3ODA5",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mROPCDwQ5GJh1e4RL?invite=cr-MSwydlosMzg2Mzc3NzM0&v=31",
+            "percent": 100,
+            "hz": 200
+        }
+    ]
+}

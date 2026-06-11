@@ -1,0 +1,55 @@
+{
+    "id": 141939065,
+    "name": "Awesome SAuce",
+    "author": "AxolotlW",
+    "creators": ["AxolotlW"],
+    "verifier": "AxolotlW",
+    "verification": "https://www.youtube.com/watch?v=kWpWoY8rq3w",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "Termy",
+            "link": "https://www.youtube.com/watch?v=_7L8WB02H9U",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/zyefwtQgONg",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Pablo",
+            "link": "https://youtu.be/kyXiTEkWl64?is=9DDb3isJDzOIUMY1",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Salad",
+            "link": "https://youtu.be/1fa3L6RCkXM",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Danielo",
+            "link": "https://www.youtube.com/watch?v=KAcALjb4Uqo",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRlJSjSUUgE_IxL26?invite=cr-MSwzYW4sMzg2Mzc3NzM0",
+            "percent": 100,
+            "hz": 200
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
+

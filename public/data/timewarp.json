@@ -1,0 +1,72 @@
+{
+    "id": 141981788,
+    "name": "Timewarp",
+    "author": "ak4c",
+    "creators": ["ak4c"],
+    "verifier": "ak4c",
+    "verification": "https://youtu.be/hNvich8x3EM",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "Termy",
+            "link": "https://www.youtube.com/watch?v=VOS5FJj1oyY",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "eistee_king1234",
+            "link": "https://youtube.com/shorts/_8UccR4N3dc?si=nW3RvH9s5mcvV8pU",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "anilop85",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRw4FoUy9MpjJlfYh?invite=cr-MSxQdm8sMjEyOTQ4Njc3&v=80",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "kurtiscoool",
+            "link": "https://www.youtube.com/watch?v=rpqJ2oFQjz8",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "fijased",
+            "link": "https://youtu.be/-FaAevi9COw",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Myszon12",
+            "link": "https://youtu.be/-hI_QQl4pxk",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRlw9TF1H82pk4TDh?invite=cr-MSxLM1gsMzg2Mzc3NzM0&v=79",
+            "percent": 100,
+            "hz": 200
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "TheNoobika500",
+            "link": "https://youtu.be/fhA4QpfMxbU",
+            "percent": 100,
+            "hz": 110
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

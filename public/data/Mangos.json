@@ -1,0 +1,96 @@
+{
+    "id": 141870930,
+    "name": "Mangos",
+    "author": "KwOojek",
+    "creators": ["KwOojek & Termy"],
+    "verifier": "Termy",
+    "verification": "https://www.youtube.com/watch?v=phRN5y2Libc",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/5EEFGrZmtW8",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Pablo",
+            "link": "https://youtu.be/ryX3PU2LSCU?is=L0zOA5BIv2skH5Jh",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "rRtiP0",
+            "link": "https://medal.tv/games/geometry-dash/clips/mQHfi59xHc-0uqec5?invite=cr-MSx4ZHIsNTEzOTM3ODA5",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Danielo",
+            "link": "https://www.youtube.com/watch?v=GlCC2oVsLcU",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "kurtiscoool",
+            "link": "https://www.youtube.com/watch?v=Arun3msUpwM",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "ebonator1",
+            "link": "https://youtu.be/byMRR4vPEq4",
+            "percent": 100,
+            "hz": 200
+        },
+        {
+            "user": "ErikTheCroat69",
+            "link": "https://youtu.be/eYSb9eHnbmU",
+            "percent": 100,
+            "hz": 75
+        },
+        {
+            "user": "Salad",
+            "link": "https://www.youtube.com/watch?v=07lkZqMachs",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRl0Yi950hedfHDmP?invite=cr-MSxjWjMsMzg2Mzc3NzM0&v=38",
+            "percent": 100,
+            "hz": 200
+        },
+        {
+            "user": "Myszon12",
+            "link": "https://youtu.be/-hI_QQl4pxk",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "fijased",
+            "link": "https://www.youtube.com/watch?v=zCUAmQbEljY",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "Tzouvalos",
+            "link": "https://www.youtube.com/watch?v=a8HdpQ7mza8",
+            "percent": 100,
+            "hz": 75
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}

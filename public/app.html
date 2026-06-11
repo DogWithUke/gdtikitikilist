@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=1024" />
+        <title>GD Tiktok List</title>
+
+        <!-- Replace your server icon by uploading an image file named "list_icon.png"-->
+        <link rel="icon" href="/list_icon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@500;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" type="text/css" href="/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="/css/typography.css" />
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="/css/pages/list.css" />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/css/pages/leaderboard.css"
+        />
+        <link rel="stylesheet" type="text/css" href="/css/pages/roulette.css" />
+        <link rel="stylesheet" type="text/css" href="/css/components/nav.css" />
+        <link rel="stylesheet" type="text/css" href="/css/components/btn.css" />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/css/components/tabs.css"
+        />
+        <script src="https://unpkg.com/vue@3.2.31/dist/vue.global.js"></script>
+        <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
+        <script type="module" src="/js/main.js"></script>
+    </head>
+    <body id="app">
+        <header :class="{ dark: store.dark }">
+            <div class="logo">
+                <h2>GDTikTokList</h2>
+                <p>v1.0.1</p>
+            </div>
+            <nav class="nav">
+                <router-link class="nav__tab" to="/">
+                    <span class="type-label-lg">List</span>
+                </router-link>
+                <router-link class="nav__tab" to="/leaderboard">
+                    <span class="type-label-lg">Leaderboard</span>
+                </router-link>
+                <router-link class="nav__tab" to="/roulette">
+                    <span class="type-label-lg">Roulette</span>
+                </router-link>
+                <div class="nav__actions">
+                    <button
+                        class="nav__icon"
+                        @click.prevent="store.toggleDark()"
+                    >
+                        <img
+                            :src="store.dark ? '/assets/light.svg' : '/assets/dark.svg'"
+                            alt=""
+                        />
+                    </button>
+                    <!-- Replace the '#' with your discord server's invite-->
+                    <a class="nav__icon" href="#">
+                        <img src="/assets/discord.svg" alt="Discord Logo" />
+                    </a>
+                    <!-- List record submission form -->
+                    <a
+                        class="nav__cta type-label-lg"
+                        href="#"
+                        id="open-submit-modal"
+                        >Submit Record</a
+                    >
+                    <a
+                        class="nav__cta type-label-lg"
+                        href="#"
+                        id="open-status-modal"
+                        style="background:#6b7280"
+                        >Check Status</a
+                    >
+                    <a
+                        class="nav__cta type-label-lg"
+                        href="#"
+                        id="open-recent-modal"
+                        style="background:#16a34a"
+                        >Recent Records</a
+                    >
+                </div>
+            </nav>
+        </header>
+        <router-view :class="{ dark: store.dark }"></router-view>
+
+        <div id="submit-modal" v-pre class="submit-modal" style="display:none;">
+            <div class="submit-modal__overlay"></div>
+            <div class="submit-modal__dialog">
+                <button type="button" class="submit-modal__close" aria-label="Close">&times;</button>
+                <h2 class="submit-modal__title">Submit Record</h2>
+                <form id="submit-form" class="submit-modal__form" novalidate>
+                    <label>
+                        <span>Username *</span>
+                        <input type="text" name="username" required />
+                    </label>
+                    <label>
+                        <span>Level *</span>
+                        <select name="level" required>
+                            <option value="">Select a level…</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Record Link *</span>
+                        <input type="url" name="record_link" required />
+                    </label>
+                    <label>
+                        <span>Raw Footage Link *</span>
+                        <input type="url" name="raw_link" required />
+                    </label>
+                    <label>
+                        <span>Notes</span>
+                        <textarea name="notes" rows="3"></textarea>
+                    </label>
+                    <label>
+                        <span>Refresh Rate (Hz) *</span>
+                        <input type="number" name="hz" min="1" max="1000" placeholder="e.g. 60, 144, 240" required />
+                    </label>
+                    <fieldset class="submit-modal__radios">
+                        <legend>Platform *</legend>
+                        <label class="inline"><input type="radio" name="platform" value="Mobile" required /> Mobile</label>
+                        <label class="inline"><input type="radio" name="platform" value="PC" /> PC</label>
+                    </fieldset>
+                    <p class="submit-modal__hint">Please read the Submission Guidelines before submitting.</p>
+                    <button type="submit" class="submit-modal__btn">Submit</button>
+                    <p class="submit-modal__status" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="status-modal" v-pre class="submit-modal" style="display:none;">
+            <div class="submit-modal__overlay"></div>
+            <div class="submit-modal__dialog">
+                <button type="button" class="submit-modal__close" aria-label="Close">&times;</button>
+                <h2 class="submit-modal__title">Check Submission Status</h2>
+                <form id="status-form" class="submit-modal__form" novalidate>
+                    <label>
+                        <span>Your Username</span>
+                        <input type="text" name="username" required />
+                    </label>
+                    <button type="submit" class="submit-modal__btn">Look up</button>
+                </form>
+                <div id="status-results" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <div id="recent-modal" v-pre class="submit-modal" style="display:none;">
+            <div class="submit-modal__overlay"></div>
+            <div class="submit-modal__dialog">
+                <button type="button" class="submit-modal__close" aria-label="Close">&times;</button>
+                <h2 class="submit-modal__title">Recent Accepted Records</h2>
+                <div id="recent-results">Loading…</div>
+            </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/submit-modal.css" />
+        <script type="module" src="/js/submit-modal.js"></script>
+    </body>
+</html>

@@ -1,0 +1,54 @@
+{
+    "id": 142056950,
+    "name": "Ugly Mustard",
+    "author": "StickyMust",
+    "creators": ["StickyMust "],
+    "verifier": "ak4c",
+    "verification": "https://youtu.be/u1eHkx7imk4",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "Termy",
+            "link": "https://www.youtube.com/watch?v=7DC4H5Cfkjo",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "kurtiscoool",
+            "link": "https://www.youtube.com/watch?v=TUj5xi9-V60",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "rRtiP0",
+            "link": "https://medal.tv/games/geometry-dash/clips/mRon2nhbDEVd88c_Z?invite=cr-MSwzdmUsNTEzOTM3ODA5",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MayXaX",
+            "link": "https://medal.tv/games/geometry-dash/clips/mROZCzsU0xqMf7pjX?invite=cr-MSw4MXYsMzg2Mzc3NzM0&v=31",
+            "percent": 100,
+            "hz": 200
+        },
+        {
+            "user": "eistee_king1234",
+            "link": "https://youtube.com/shorts/WNHvT7yVXy4?si=7XZpv3OrygdKPNZV",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

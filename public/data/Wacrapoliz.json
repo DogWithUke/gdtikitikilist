@@ -1,0 +1,30 @@
+{
+    "id": 141980941,
+    "name": "Wacropoliz",
+    "author": "AcrylicLV ",
+    "creators": ["AcrylicLV "],
+    "verifier": "Danielo",
+    "verification": "https://www.youtube.com/watch?v=N7o75jpXCvk",
+    "percentToQualify": "100",
+    "password": "Copyable",
+    "records": [
+        {
+            "user": "ak4c",
+            "link": "https://youtu.be/Sm8GFScczjM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "AxolotlW",
+            "link": "https://www.youtube.com/watch?v=JaJ_6gBfjMM",
+            "percent": 100,
+            "hz": 240
+        },
+        {
+            "user": "MakuGD",
+            "link": "https://www.youtube.com/playlist?list=PLHg8TODa6qWZSkwLb1Ig8OZHKWrNB3Rpa",
+            "percent": 100,
+            "hz": 240
+        }
+    ]
+}
