@@ -1,14 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { verifyAsync } from "@noble/ed25519";
 
-
 const PING = 1;
 const APPLICATION_COMMAND = 2;
 const MESSAGE_COMPONENT = 3;
 
 const PONG = 1;
 const CHANNEL_MESSAGE_WITH_SOURCE = 4;
-const DEFERRED_UPDATE_MESSAGE = 6;
 const UPDATE_MESSAGE = 7;
 const EPHEMERAL = 1 << 6;
 
@@ -31,11 +29,7 @@ async function verifySignature(
 ): Promise<boolean> {
   try {
     const message = new TextEncoder().encode(timestamp + body);
-    return await verifyAsync(
-      hexToBytes(signatureHex),
-      message,
-      hexToBytes(publicKeyHex),
-    );
+    return await verifyAsync(hexToBytes(signatureHex), message, hexToBytes(publicKeyHex));
   } catch (e) {
     console.error("verify error", e);
     return false;
@@ -101,18 +95,14 @@ function buildToggleComponents(status: "accepted" | "rejected", id: string) {
     return [
       {
         type: 1,
-        components: [
-          { type: 2, style: 4, label: "Reject", custom_id: `reject:${id}` },
-        ],
+        components: [{ type: 2, style: 4, label: "Reject", custom_id: `reject:${id}` }],
       },
     ];
   }
   return [
     {
       type: 1,
-      components: [
-        { type: 2, style: 3, label: "Accept", custom_id: `approve:${id}` },
-      ],
+      components: [{ type: 2, style: 3, label: "Accept", custom_id: `approve:${id}` }],
     },
   ];
 }
@@ -122,17 +112,14 @@ async function postToChannel(
   channelId: string,
   payload: unknown,
 ): Promise<string | null> {
-  const res = await fetch(
-    `https://discord.com/api/v10/channels/${channelId}/messages`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bot ${botToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+  const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bot ${botToken}`,
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(payload),
+  });
   if (!res.ok) {
     const errorText = await res.text();
     console.error("discord post failed", channelId, res.status, errorText);
