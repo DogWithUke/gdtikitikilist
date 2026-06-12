@@ -428,7 +428,10 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             }
             try {
               const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-              let q = supabaseAdmin.from("custom_levels").select("id, name, position");
+              let q = supabaseAdmin
+                .from("custom_levels")
+                .select("id, name, position")
+                .is("deleted_at", null);
               if (name) q = q.ilike("name", name);
               if (position !== undefined) q = q.eq("position", Number(position));
               const { data: matches, error: selErr } = await q;
@@ -439,11 +442,11 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
               const ids = matches.map((m) => m.id);
               const { error: delErr } = await supabaseAdmin
                 .from("custom_levels")
-                .delete()
+                .update({ deleted_at: new Date().toISOString() })
                 .in("id", ids);
               if (delErr) throw delErr;
               return ephemeralMessage(
-                `Deleted ${matches.length} level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}.`,
+                `Deleted ${matches.length} level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}. Use /restore_level to undo.`,
               );
             } catch (e) {
               console.error("delete_level failed", e);
@@ -451,8 +454,40 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             }
           }
 
+          if (cmd === "restore_level") {
+            const name = String(opts.find((o) => o.name === "name")?.value ?? "").trim();
+            try {
+              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+              let q = supabaseAdmin
+                .from("custom_levels")
+                .select("id, name, position, deleted_at")
+                .not("deleted_at", "is", null)
+                .order("deleted_at", { ascending: false });
+              if (name) q = q.ilike("name", name);
+              else q = q.limit(1);
+              const { data: matches, error: selErr } = await q;
+              if (selErr) throw selErr;
+              if (!matches || matches.length === 0) {
+                return ephemeralMessage("No deleted levels to restore.");
+              }
+              const ids = matches.map((m) => m.id);
+              const { error: updErr } = await supabaseAdmin
+                .from("custom_levels")
+                .update({ deleted_at: null })
+                .in("id", ids);
+              if (updErr) throw updErr;
+              return ephemeralMessage(
+                `Restored ${matches.length} level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}.`,
+              );
+            } catch (e) {
+              console.error("restore_level failed", e);
+              return ephemeralMessage("Could not restore level. Try again.");
+            }
+          }
+
           return ephemeralMessage("Unknown command.");
         }
+
 
 
         return json({ error: "Unsupported interaction" }, 400);
