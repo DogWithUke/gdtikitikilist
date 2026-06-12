@@ -329,6 +329,97 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             }
           }
 
+          if (cmd === "add_level") {
+            const getOpt = (n: string) => opts.find((o) => o.name === n)?.value;
+            const position = Number(getOpt("position"));
+            const name = String(getOpt("name") ?? "").trim();
+            const levelId = String(getOpt("level_id") ?? "").trim();
+            const points = Number(getOpt("points"));
+            const verifier = String(getOpt("verifier") ?? "").trim();
+            const creatorsRaw = String(getOpt("creators") ?? "").trim();
+            const publisher = String(getOpt("publisher") ?? "").trim() || null;
+            const password = String(getOpt("password") ?? "").trim() || null;
+            const verification = String(getOpt("verification") ?? "").trim() || null;
+            const recordsRaw = String(getOpt("records") ?? "").trim();
+
+            if (!position || !name || !levelId || !verifier || isNaN(points)) {
+              return ephemeralMessage(
+                "Usage: /add_level position:<#> name:<name> level_id:<id> points:<n> verifier:<user> creators:<a,b> [publisher] [password] [verification] [records:user|link|hz,user|link|hz]",
+              );
+            }
+
+            const creators = creatorsRaw
+              ? creatorsRaw.split(",").map((s) => s.trim()).filter(Boolean)
+              : [];
+
+            try {
+              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+              const { data: inserted, error: insErr } = await supabaseAdmin
+                .from("custom_levels")
+                .insert({
+                  position,
+                  name,
+                  level_id: levelId,
+                  password,
+                  creators,
+                  verifier,
+                  publisher,
+                  points,
+                  verification,
+                })
+                .select("id")
+                .single();
+              if (insErr) throw insErr;
+
+              // Optional bulk records: "user|link|hz,user|link|hz"
+              if (recordsRaw && inserted) {
+                const levelPath = `custom:${inserted.id}`;
+                type RecRow = {
+                  username: string;
+                  level: string;
+                  level_path: string;
+                  record_link: string;
+                  raw_link: string;
+                  platform: string;
+                  hz: number | null;
+                  status: string;
+                  reviewed_at: string;
+                };
+                const recRows = recordsRaw
+                  .split(",")
+                  .map((chunk): RecRow | null => {
+                    const [user, link, hz] = chunk.split("|").map((s) => s.trim());
+                    if (!user || !link) return null;
+                    return {
+                      username: user,
+                      level: name,
+                      level_path: levelPath,
+                      record_link: link,
+                      raw_link: link,
+                      platform: "unknown",
+                      hz: hz ? Number(hz) : null,
+                      status: "accepted",
+                      reviewed_at: new Date().toISOString(),
+                    };
+                  })
+                  .filter((r): r is RecRow => r !== null);
+                if (recRows.length > 0) {
+                  const { error: recErr } = await supabaseAdmin
+                    .from("submissions")
+                    .insert(recRows);
+                  if (recErr) console.error("add_level records insert failed", recErr);
+                }
+              }
+
+              return ephemeralMessage(
+                `Added **${name}** at #${position} — ${points} pts, verified by ${verifier}.`,
+              );
+            } catch (e) {
+              console.error("add_level failed", e);
+              return ephemeralMessage("Could not add level. Try again.");
+            }
+          }
+
           return ephemeralMessage("Unknown command.");
         }
 

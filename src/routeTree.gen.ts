@@ -15,6 +15,7 @@ import { Route as ApiPublicRecordsRouteImport } from './routes/api/public/record
 import { Route as ApiPublicRecentAcceptedRouteImport } from './routes/api/public/recent-accepted'
 import { Route as ApiPublicMySubmissionsRouteImport } from './routes/api/public/my-submissions'
 import { Route as ApiPublicDiscordInteractionsRouteImport } from './routes/api/public/discord-interactions'
+import { Route as ApiPublicCustomLevelsRouteImport } from './routes/api/public/custom-levels'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,9 +48,15 @@ const ApiPublicDiscordInteractionsRoute =
     path: '/api/public/discord-interactions',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCustomLevelsRoute = ApiPublicCustomLevelsRouteImport.update({
+  id: '/api/public/custom-levels',
+  path: '/api/public/custom-levels',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicCustomLevelsRoute: typeof ApiPublicCustomLevelsRoute
   ApiPublicDiscordInteractionsRoute: typeof ApiPublicDiscordInteractionsRoute
   ApiPublicMySubmissionsRoute: typeof ApiPublicMySubmissionsRoute
   ApiPublicRecentAcceptedRoute: typeof ApiPublicRecentAcceptedRoute
@@ -153,11 +166,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDiscordInteractionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/custom-levels': {
+      id: '/api/public/custom-levels'
+      path: '/api/public/custom-levels'
+      fullPath: '/api/public/custom-levels'
+      preLoaderRoute: typeof ApiPublicCustomLevelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicCustomLevelsRoute: ApiPublicCustomLevelsRoute,
   ApiPublicDiscordInteractionsRoute: ApiPublicDiscordInteractionsRoute,
   ApiPublicMySubmissionsRoute: ApiPublicMySubmissionsRoute,
   ApiPublicRecentAcceptedRoute: ApiPublicRecentAcceptedRoute,
