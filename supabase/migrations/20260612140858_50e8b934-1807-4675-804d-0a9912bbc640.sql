@@ -1,0 +1,1 @@
+ALTER TABLE public.custom_levels ADD COLUMN IF NOT EXISTS deleted_at timestamptz;
