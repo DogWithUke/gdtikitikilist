@@ -264,9 +264,10 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
 
         if (interaction.type === APPLICATION_COMMAND) {
           const cmd = interaction.data?.name;
+          const opts = interaction.data?.options ?? [];
+          const username = opts.find((o) => o.name === "username")?.value?.trim();
+
           if (cmd === "delete_record") {
-            const opts = interaction.data?.options ?? [];
-            const username = opts.find((o) => o.name === "username")?.value?.trim();
             const level = opts.find((o) => o.name === "level")?.value?.trim();
             if (!username || !level) {
               return ephemeralMessage("Usage: /delete_record username:<user> level:<level>");
@@ -275,7 +276,7 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
               const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
               const { data: matches, error: selErr } = await supabaseAdmin
                 .from("submissions")
-                .select("id, username, level, discord_message_id")
+                .select("id, username, level")
                 .ilike("username", username)
                 .ilike("level", level);
               if (selErr) throw selErr;
@@ -298,6 +299,36 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
               return ephemeralMessage("Could not delete record. Try again.");
             }
           }
+
+          if (cmd === "wipe_user") {
+            if (!username) {
+              return ephemeralMessage("Usage: /wipe_user username:<user>");
+            }
+            try {
+              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+              const { data: matches, error: selErr } = await supabaseAdmin
+                .from("submissions")
+                .select("id, username")
+                .ilike("username", username);
+              if (selErr) throw selErr;
+              if (!matches || matches.length === 0) {
+                return ephemeralMessage(`No records found for **${username}**.`);
+              }
+              const ids = matches.map((m) => m.id);
+              const { error: delErr } = await supabaseAdmin
+                .from("submissions")
+                .delete()
+                .in("id", ids);
+              if (delErr) throw delErr;
+              return ephemeralMessage(
+                `Wiped ${matches.length} record(s) for **${matches[0].username}**.`,
+              );
+            } catch (e) {
+              console.error("wipe_user failed", e);
+              return ephemeralMessage("Could not wipe records. Try again.");
+            }
+          }
+
           return ephemeralMessage("Unknown command.");
         }
 
