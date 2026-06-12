@@ -214,7 +214,11 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
           type: number;
           application_id?: string;
           token: string;
-          data?: { custom_id?: string };
+          data?: {
+            custom_id?: string;
+            name?: string;
+            options?: Array<{ name: string; value: string }>;
+          };
           member?: { user?: { id: string; username: string } };
           user?: { id: string; username: string };
         };
@@ -259,10 +263,42 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
         }
 
         if (interaction.type === APPLICATION_COMMAND) {
-          return json({
-            type: CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: "No commands available.", flags: EPHEMERAL },
-          });
+          const cmd = interaction.data?.name;
+          if (cmd === "delete_record") {
+            const opts = interaction.data?.options ?? [];
+            const username = opts.find((o) => o.name === "username")?.value?.trim();
+            const level = opts.find((o) => o.name === "level")?.value?.trim();
+            if (!username || !level) {
+              return ephemeralMessage("Usage: /delete_record username:<user> level:<level>");
+            }
+            try {
+              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+              const { data: matches, error: selErr } = await supabaseAdmin
+                .from("submissions")
+                .select("id, username, level, discord_message_id")
+                .ilike("username", username)
+                .ilike("level", level);
+              if (selErr) throw selErr;
+              if (!matches || matches.length === 0) {
+                return ephemeralMessage(
+                  `No records found for **${username}** on **${level}**.`,
+                );
+              }
+              const ids = matches.map((m) => m.id);
+              const { error: delErr } = await supabaseAdmin
+                .from("submissions")
+                .delete()
+                .in("id", ids);
+              if (delErr) throw delErr;
+              return ephemeralMessage(
+                `Deleted ${matches.length} record(s) for **${matches[0].username}** on **${matches[0].level}**.`,
+              );
+            } catch (e) {
+              console.error("delete_record failed", e);
+              return ephemeralMessage("Could not delete record. Try again.");
+            }
+          }
+          return ephemeralMessage("Unknown command.");
         }
 
         return json({ error: "Unsupported interaction" }, 400);
