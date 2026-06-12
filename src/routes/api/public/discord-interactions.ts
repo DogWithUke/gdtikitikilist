@@ -420,8 +420,40 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             }
           }
 
+          if (cmd === "delete_level") {
+            const name = String(opts.find((o) => o.name === "name")?.value ?? "").trim();
+            const position = opts.find((o) => o.name === "position")?.value;
+            if (!name && position === undefined) {
+              return ephemeralMessage("Usage: /delete_level name:<name> OR position:<#>");
+            }
+            try {
+              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+              let q = supabaseAdmin.from("custom_levels").select("id, name, position");
+              if (name) q = q.ilike("name", name);
+              if (position !== undefined) q = q.eq("position", Number(position));
+              const { data: matches, error: selErr } = await q;
+              if (selErr) throw selErr;
+              if (!matches || matches.length === 0) {
+                return ephemeralMessage("No matching custom level found.");
+              }
+              const ids = matches.map((m) => m.id);
+              const { error: delErr } = await supabaseAdmin
+                .from("custom_levels")
+                .delete()
+                .in("id", ids);
+              if (delErr) throw delErr;
+              return ephemeralMessage(
+                `Deleted ${matches.length} level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}.`,
+              );
+            } catch (e) {
+              console.error("delete_level failed", e);
+              return ephemeralMessage("Could not delete level. Try again.");
+            }
+          }
+
           return ephemeralMessage("Unknown command.");
         }
+
 
         return json({ error: "Unsupported interaction" }, 400);
       },
