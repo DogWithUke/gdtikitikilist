@@ -17,44 +17,83 @@ async function fetchAcceptedRecords() {
     }
 }
 
+async function fetchCustomLevels() {
+    try {
+        const res = await fetch('/api/public/custom-levels');
+        if (!res.ok) return [];
+        const body = await res.json();
+        return Array.isArray(body.levels) ? body.levels : [];
+    } catch (e) {
+        console.warn('Failed to load custom levels', e);
+        return [];
+    }
+}
+
 export async function fetchList() {
-    const [listResult, accepted] = await Promise.all([
+    const [listResult, accepted, customLevels] = await Promise.all([
         fetch(`${dir}/_list.json`),
         fetchAcceptedRecords(),
+        fetchCustomLevels(),
     ]);
     try {
         const list = await listResult.json();
-        return await Promise.all(
+        const baseLevels = await Promise.all(
             list.map(async (path, rank) => {
                 const levelResult = await fetch(`${dir}/${path}.json`);
                 try {
                     const level = await levelResult.json();
-                    // Merge accepted submissions for this level
-                    const dynamic = accepted
-                        .filter((r) => r.level_path === path)
-                        .map((r) => ({
-                            user: r.username,
-                            link: r.record_link,
-                            percent: 100,
-                            hz: r.hz ?? 60,
-                        }));
-                    const merged = [...level.records, ...dynamic];
-                    return [
-                        {
-                            ...level,
-                            path,
-                            records: merged.sort(
-                                (a, b) => b.percent - a.percent,
-                            ),
-                        },
-                        null,
-                    ];
+                    return [{ ...level, path }, null];
                 } catch {
                     console.error(`Failed to load level #${rank + 1} ${path}.`);
                     return [null, path];
                 }
             }),
         );
+
+        // Insert custom levels at their positions (1-indexed)
+        const sortedCustom = [...customLevels].sort(
+            (a, b) => a.position - b.position,
+        );
+        for (const cl of sortedCustom) {
+            const path = `custom:${cl.id}`;
+            const level = {
+                id: cl.level_id,
+                name: cl.name,
+                author: cl.publisher || cl.verifier,
+                creators: cl.creators || [],
+                verifier: cl.verifier,
+                publisher: cl.publisher,
+                verification: cl.verification,
+                percentToQualify: 100,
+                password: cl.password || 'Free to Copy',
+                records: [],
+                path,
+                customPoints: Number(cl.points) || 0,
+            };
+            const idx = Math.max(0, Math.min(baseLevels.length, cl.position - 1));
+            baseLevels.splice(idx, 0, [level, null]);
+        }
+
+        // Merge accepted submissions per level
+        return baseLevels.map(([level, err]) => {
+            if (!level) return [null, err];
+            const dynamic = accepted
+                .filter((r) => r.level_path === level.path)
+                .map((r) => ({
+                    user: r.username,
+                    link: r.record_link,
+                    percent: 100,
+                    hz: r.hz ?? 60,
+                }));
+            const merged = [...(level.records || []), ...dynamic];
+            return [
+                {
+                    ...level,
+                    records: merged.sort((a, b) => b.percent - a.percent),
+                },
+                null,
+            ];
+        });
     } catch {
         console.error(`Failed to load list.`);
         return null;
@@ -82,6 +121,14 @@ export async function fetchLeaderboard() {
             return;
         }
 
+        const levelScore = (percent) => {
+            if (typeof level.customPoints === 'number' && level.customPoints > 0) {
+                if (percent === 100) return level.customPoints;
+                return round(level.customPoints * (2 / 3));
+            }
+            return score(rank + 1, percent, level.percentToQualify);
+        };
+
         // Verification
         const verifier = Object.keys(scoreMap).find(
             (u) => u.toLowerCase() === level.verifier.toLowerCase(),
@@ -95,7 +142,7 @@ export async function fetchLeaderboard() {
         verified.push({
             rank: rank + 1,
             level: level.name,
-            score: score(rank + 1, 100, level.percentToQualify),
+            score: levelScore(100),
             link: level.verification,
         });
 
@@ -114,7 +161,7 @@ export async function fetchLeaderboard() {
                 completed.push({
                     rank: rank + 1,
                     level: level.name,
-                    score: score(rank + 1, 100, level.percentToQualify),
+                    score: levelScore(100),
                     link: record.link,
                 });
                 return;
@@ -124,7 +171,7 @@ export async function fetchLeaderboard() {
                 rank: rank + 1,
                 level: level.name,
                 percent: record.percent,
-                score: score(rank + 1, record.percent, level.percentToQualify),
+                score: levelScore(record.percent),
                 link: record.link,
             });
         });
