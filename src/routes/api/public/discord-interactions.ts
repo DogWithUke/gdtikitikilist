@@ -374,9 +374,20 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
               // Optional bulk records: "user|link|hz,user|link|hz"
               if (recordsRaw && inserted) {
                 const levelPath = `custom:${inserted.id}`;
+                type RecRow = {
+                  username: string;
+                  level: string;
+                  level_path: string;
+                  record_link: string;
+                  raw_link: string;
+                  platform: string;
+                  hz: number | null;
+                  status: string;
+                  reviewed_at: string;
+                };
                 const recRows = recordsRaw
                   .split(",")
-                  .map((chunk) => {
+                  .map((chunk): RecRow | null => {
                     const [user, link, hz] = chunk.split("|").map((s) => s.trim());
                     if (!user || !link) return null;
                     return {
@@ -391,7 +402,7 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
                       reviewed_at: new Date().toISOString(),
                     };
                   })
-                  .filter(Boolean) as Array<Record<string, unknown>>;
+                  .filter((r): r is RecRow => r !== null);
                 if (recRows.length > 0) {
                   const { error: recErr } = await supabaseAdmin
                     .from("submissions")
