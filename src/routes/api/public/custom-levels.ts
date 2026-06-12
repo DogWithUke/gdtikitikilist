@@ -8,7 +8,9 @@ export const Route = createFileRoute("/api/public/custom-levels")({
         const { data, error } = await supabaseAdmin
           .from("custom_levels")
           .select("*")
+          .is("deleted_at", null)
           .order("position", { ascending: true });
+
 
         const headers = {
           "Content-Type": "application/json",
