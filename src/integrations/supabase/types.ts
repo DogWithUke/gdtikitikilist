@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      custom_levels: {
+        Row: {
+          created_at: string
+          creators: string[]
+          id: string
+          level_id: string
+          name: string
+          password: string | null
+          points: number
+          position: number
+          publisher: string | null
+          verification: string | null
+          verifier: string
+        }
+        Insert: {
+          created_at?: string
+          creators?: string[]
+          id?: string
+          level_id: string
+          name: string
+          password?: string | null
+          points?: number
+          position: number
+          publisher?: string | null
+          verification?: string | null
+          verifier: string
+        }
+        Update: {
+          created_at?: string
+          creators?: string[]
+          id?: string
+          level_id?: string
+          name?: string
+          password?: string | null
+          points?: number
+          position?: number
+          publisher?: string | null
+          verification?: string | null
+          verifier?: string
+        }
+        Relationships: []
+      }
       submissions: {
         Row: {
           created_at: string
