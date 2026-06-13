@@ -612,7 +612,7 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
               }
 
               if (action === "update") {
-                const patch: Record<string, unknown> = {};
+                const patch: { role?: string; link?: string; sort_order?: number } = {};
                 if (opts.find((o) => o.name === "role")) patch.role = role;
                 if (opts.find((o) => o.name === "link")) patch.link = link;
                 if (opts.find((o) => o.name === "sort_order")) patch.sort_order = sortOrder;
