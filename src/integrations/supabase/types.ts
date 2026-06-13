@@ -59,6 +59,51 @@ export type Database = {
         }
         Relationships: []
       }
+      hidden_levels: {
+        Row: {
+          hidden_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          hidden_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          hidden_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      level_changelog: {
+        Row: {
+          details: Json
+          event_type: string
+          id: string
+          level_name: string
+          occurred_at: string
+          position: number | null
+        }
+        Insert: {
+          details?: Json
+          event_type: string
+          id?: string
+          level_name: string
+          occurred_at?: string
+          position?: number | null
+        }
+        Update: {
+          details?: Json
+          event_type?: string
+          id?: string
+          level_name?: string
+          occurred_at?: string
+          position?: number | null
+        }
+        Relationships: []
+      }
       submissions: {
         Row: {
           created_at: string
