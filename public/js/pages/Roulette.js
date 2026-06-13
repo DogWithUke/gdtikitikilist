@@ -185,6 +185,13 @@ export default {
         shuffle,
         getThumbnailFromId,
         getYoutubeIdFromUrl,
+        formatDate(iso) {
+            try {
+                return new Date(iso).toLocaleString();
+            } catch {
+                return iso;
+            }
+        },
         async onStart() {
             if (this.isActive) {
                 this.showToast('Give up before starting a new roulette.');
