@@ -14,8 +14,10 @@ import { Route as ApiPublicSubmitRouteImport } from './routes/api/public/submit'
 import { Route as ApiPublicRecordsRouteImport } from './routes/api/public/records'
 import { Route as ApiPublicRecentAcceptedRouteImport } from './routes/api/public/recent-accepted'
 import { Route as ApiPublicMySubmissionsRouteImport } from './routes/api/public/my-submissions'
+import { Route as ApiPublicHiddenLevelsRouteImport } from './routes/api/public/hidden-levels'
 import { Route as ApiPublicDiscordInteractionsRouteImport } from './routes/api/public/discord-interactions'
 import { Route as ApiPublicCustomLevelsRouteImport } from './routes/api/public/custom-levels'
+import { Route as ApiPublicChangelogRouteImport } from './routes/api/public/changelog'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,6 +44,11 @@ const ApiPublicMySubmissionsRoute = ApiPublicMySubmissionsRouteImport.update({
   path: '/api/public/my-submissions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHiddenLevelsRoute = ApiPublicHiddenLevelsRouteImport.update({
+  id: '/api/public/hidden-levels',
+  path: '/api/public/hidden-levels',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDiscordInteractionsRoute =
   ApiPublicDiscordInteractionsRouteImport.update({
     id: '/api/public/discord-interactions',
@@ -53,11 +60,18 @@ const ApiPublicCustomLevelsRoute = ApiPublicCustomLevelsRouteImport.update({
   path: '/api/public/custom-levels',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicChangelogRoute = ApiPublicChangelogRouteImport.update({
+  id: '/api/public/changelog',
+  path: '/api/public/changelog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/changelog': typeof ApiPublicChangelogRoute
   '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
+  '/api/public/hidden-levels': typeof ApiPublicHiddenLevelsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
   '/api/public/records': typeof ApiPublicRecordsRoute
@@ -65,8 +79,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/changelog': typeof ApiPublicChangelogRoute
   '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
+  '/api/public/hidden-levels': typeof ApiPublicHiddenLevelsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
   '/api/public/records': typeof ApiPublicRecordsRoute
@@ -75,8 +91,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/changelog': typeof ApiPublicChangelogRoute
   '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
+  '/api/public/hidden-levels': typeof ApiPublicHiddenLevelsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
   '/api/public/records': typeof ApiPublicRecordsRoute
@@ -86,8 +104,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/public/changelog'
     | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
+    | '/api/public/hidden-levels'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
     | '/api/public/records'
@@ -95,8 +115,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/public/changelog'
     | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
+    | '/api/public/hidden-levels'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
     | '/api/public/records'
@@ -104,8 +126,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/api/public/changelog'
     | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
+    | '/api/public/hidden-levels'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
     | '/api/public/records'
@@ -114,8 +138,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicChangelogRoute: typeof ApiPublicChangelogRoute
   ApiPublicCustomLevelsRoute: typeof ApiPublicCustomLevelsRoute
   ApiPublicDiscordInteractionsRoute: typeof ApiPublicDiscordInteractionsRoute
+  ApiPublicHiddenLevelsRoute: typeof ApiPublicHiddenLevelsRoute
   ApiPublicMySubmissionsRoute: typeof ApiPublicMySubmissionsRoute
   ApiPublicRecentAcceptedRoute: typeof ApiPublicRecentAcceptedRoute
   ApiPublicRecordsRoute: typeof ApiPublicRecordsRoute
@@ -159,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMySubmissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hidden-levels': {
+      id: '/api/public/hidden-levels'
+      path: '/api/public/hidden-levels'
+      fullPath: '/api/public/hidden-levels'
+      preLoaderRoute: typeof ApiPublicHiddenLevelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/discord-interactions': {
       id: '/api/public/discord-interactions'
       path: '/api/public/discord-interactions'
@@ -173,13 +206,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCustomLevelsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/changelog': {
+      id: '/api/public/changelog'
+      path: '/api/public/changelog'
+      fullPath: '/api/public/changelog'
+      preLoaderRoute: typeof ApiPublicChangelogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicChangelogRoute: ApiPublicChangelogRoute,
   ApiPublicCustomLevelsRoute: ApiPublicCustomLevelsRoute,
   ApiPublicDiscordInteractionsRoute: ApiPublicDiscordInteractionsRoute,
+  ApiPublicHiddenLevelsRoute: ApiPublicHiddenLevelsRoute,
   ApiPublicMySubmissionsRoute: ApiPublicMySubmissionsRoute,
   ApiPublicRecentAcceptedRoute: ApiPublicRecentAcceptedRoute,
   ApiPublicRecordsRoute: ApiPublicRecordsRoute,
