@@ -29,6 +29,18 @@ async function fetchCustomLevels() {
     }
 }
 
+async function fetchHiddenLevels() {
+    try {
+        const res = await fetch('/api/public/hidden-levels');
+        if (!res.ok) return [];
+        const body = await res.json();
+        return Array.isArray(body.names) ? body.names : [];
+    } catch (e) {
+        console.warn('Failed to load hidden levels', e);
+        return [];
+    }
+}
+
 export async function fetchList() {
     const [listResult, accepted, customLevels] = await Promise.all([
         fetch(`${dir}/_list.json`),
