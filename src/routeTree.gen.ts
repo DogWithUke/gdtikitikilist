@@ -14,6 +14,7 @@ import { Route as ApiPublicSubmitRouteImport } from './routes/api/public/submit'
 import { Route as ApiPublicRecordsRouteImport } from './routes/api/public/records'
 import { Route as ApiPublicRecentAcceptedRouteImport } from './routes/api/public/recent-accepted'
 import { Route as ApiPublicMySubmissionsRouteImport } from './routes/api/public/my-submissions'
+import { Route as ApiPublicListEditorsRouteImport } from './routes/api/public/list-editors'
 import { Route as ApiPublicHiddenLevelsRouteImport } from './routes/api/public/hidden-levels'
 import { Route as ApiPublicDiscordInteractionsRouteImport } from './routes/api/public/discord-interactions'
 import { Route as ApiPublicCustomLevelsRouteImport } from './routes/api/public/custom-levels'
@@ -44,6 +45,11 @@ const ApiPublicMySubmissionsRoute = ApiPublicMySubmissionsRouteImport.update({
   path: '/api/public/my-submissions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicListEditorsRoute = ApiPublicListEditorsRouteImport.update({
+  id: '/api/public/list-editors',
+  path: '/api/public/list-editors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHiddenLevelsRoute = ApiPublicHiddenLevelsRouteImport.update({
   id: '/api/public/hidden-levels',
   path: '/api/public/hidden-levels',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
   '/api/public/hidden-levels': typeof ApiPublicHiddenLevelsRoute
+  '/api/public/list-editors': typeof ApiPublicListEditorsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
   '/api/public/records': typeof ApiPublicRecordsRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
   '/api/public/hidden-levels': typeof ApiPublicHiddenLevelsRoute
+  '/api/public/list-editors': typeof ApiPublicListEditorsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
   '/api/public/records': typeof ApiPublicRecordsRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/api/public/custom-levels': typeof ApiPublicCustomLevelsRoute
   '/api/public/discord-interactions': typeof ApiPublicDiscordInteractionsRoute
   '/api/public/hidden-levels': typeof ApiPublicHiddenLevelsRoute
+  '/api/public/list-editors': typeof ApiPublicListEditorsRoute
   '/api/public/my-submissions': typeof ApiPublicMySubmissionsRoute
   '/api/public/recent-accepted': typeof ApiPublicRecentAcceptedRoute
   '/api/public/records': typeof ApiPublicRecordsRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
     | '/api/public/hidden-levels'
+    | '/api/public/list-editors'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
     | '/api/public/records'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
     | '/api/public/hidden-levels'
+    | '/api/public/list-editors'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
     | '/api/public/records'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/api/public/custom-levels'
     | '/api/public/discord-interactions'
     | '/api/public/hidden-levels'
+    | '/api/public/list-editors'
     | '/api/public/my-submissions'
     | '/api/public/recent-accepted'
     | '/api/public/records'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   ApiPublicCustomLevelsRoute: typeof ApiPublicCustomLevelsRoute
   ApiPublicDiscordInteractionsRoute: typeof ApiPublicDiscordInteractionsRoute
   ApiPublicHiddenLevelsRoute: typeof ApiPublicHiddenLevelsRoute
+  ApiPublicListEditorsRoute: typeof ApiPublicListEditorsRoute
   ApiPublicMySubmissionsRoute: typeof ApiPublicMySubmissionsRoute
   ApiPublicRecentAcceptedRoute: typeof ApiPublicRecentAcceptedRoute
   ApiPublicRecordsRoute: typeof ApiPublicRecordsRoute
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMySubmissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/list-editors': {
+      id: '/api/public/list-editors'
+      path: '/api/public/list-editors'
+      fullPath: '/api/public/list-editors'
+      preLoaderRoute: typeof ApiPublicListEditorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hidden-levels': {
       id: '/api/public/hidden-levels'
       path: '/api/public/hidden-levels'
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCustomLevelsRoute: ApiPublicCustomLevelsRoute,
   ApiPublicDiscordInteractionsRoute: ApiPublicDiscordInteractionsRoute,
   ApiPublicHiddenLevelsRoute: ApiPublicHiddenLevelsRoute,
+  ApiPublicListEditorsRoute: ApiPublicListEditorsRoute,
   ApiPublicMySubmissionsRoute: ApiPublicMySubmissionsRoute,
   ApiPublicRecentAcceptedRoute: ApiPublicRecentAcceptedRoute,
   ApiPublicRecordsRoute: ApiPublicRecordsRoute,
@@ -230,3 +251,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
