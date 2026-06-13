@@ -42,14 +42,15 @@ async function fetchHiddenLevels() {
 }
 
 export async function fetchList() {
-    const [listResult, accepted, customLevels] = await Promise.all([
+    const [listResult, accepted, customLevels, hiddenNames] = await Promise.all([
         fetch(`${dir}/_list.json`),
         fetchAcceptedRecords(),
         fetchCustomLevels(),
+        fetchHiddenLevels(),
     ]);
     try {
         const list = await listResult.json();
-        const baseLevels = await Promise.all(
+        const baseLevelsRaw = await Promise.all(
             list.map(async (path, rank) => {
                 const levelResult = await fetch(`${dir}/${path}.json`);
                 try {
@@ -60,6 +61,13 @@ export async function fetchList() {
                     return [null, path];
                 }
             }),
+        );
+
+        const hiddenSet = new Set(
+            (hiddenNames || []).map((n) => String(n).toLowerCase()),
+        );
+        const baseLevels = baseLevelsRaw.filter(
+            ([lvl]) => !lvl || !hiddenSet.has(String(lvl.name).toLowerCase()),
         );
 
         // Insert custom levels at their positions (1-indexed)
