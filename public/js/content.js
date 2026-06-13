@@ -122,13 +122,28 @@ export async function fetchList() {
 
 export async function fetchEditors() {
     try {
-        const editorsResults = await fetch(`${dir}/_editors.json`);
-        const editors = await editorsResults.json();
+        const [fileRes, dbRes] = await Promise.all([
+            fetch(`${dir}/_editors.json`).catch(() => null),
+            fetch('/api/public/list-editors').catch(() => null),
+        ]);
+        let editors = [];
+        if (fileRes && fileRes.ok) {
+            try { editors = await fileRes.json(); } catch { editors = []; }
+        }
+        if (dbRes && dbRes.ok) {
+            try {
+                const body = await dbRes.json();
+                if (Array.isArray(body.editors) && body.editors.length > 0) {
+                    editors = [...editors, ...body.editors];
+                }
+            } catch {}
+        }
         return editors;
     } catch {
         return null;
     }
 }
+
 
 export async function fetchLeaderboard() {
     const list = await fetchList();
