@@ -371,6 +371,13 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
                 .single();
               if (insErr) throw insErr;
 
+              await supabaseAdmin.from("level_changelog").insert({
+                event_type: "added",
+                level_name: name,
+                position,
+                details: { verifier, points, displaces_from: position },
+              });
+
               // Optional bulk records: "user|link|hz,user|link|hz"
               if (recordsRaw && inserted) {
                 const levelPath = `custom:${inserted.id}`;
@@ -436,17 +443,45 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
               if (position !== undefined) q = q.eq("position", Number(position));
               const { data: matches, error: selErr } = await q;
               if (selErr) throw selErr;
-              if (!matches || matches.length === 0) {
-                return ephemeralMessage("No matching custom level found.");
+
+              if (matches && matches.length > 0) {
+                const ids = matches.map((m) => m.id);
+                const { error: delErr } = await supabaseAdmin
+                  .from("custom_levels")
+                  .update({ deleted_at: new Date().toISOString() })
+                  .in("id", ids);
+                if (delErr) throw delErr;
+                await supabaseAdmin.from("level_changelog").insert(
+                  matches.map((m) => ({
+                    event_type: "deleted",
+                    level_name: m.name,
+                    position: m.position,
+                    details: { source: "custom" },
+                  })),
+                );
+                return ephemeralMessage(
+                  `Deleted ${matches.length} custom level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}. Use /restore_level to undo.`,
+                );
               }
-              const ids = matches.map((m) => m.id);
-              const { error: delErr } = await supabaseAdmin
-                .from("custom_levels")
-                .update({ deleted_at: new Date().toISOString() })
-                .in("id", ids);
-              if (delErr) throw delErr;
+
+              // Fallback: hide a built-in (file-based) list level by name
+              if (!name) {
+                return ephemeralMessage(
+                  "No matching custom level found. To hide a built-in level, provide name:<level name>.",
+                );
+              }
+              const { error: hideErr } = await supabaseAdmin
+                .from("hidden_levels")
+                .upsert({ name }, { onConflict: "name" });
+              if (hideErr) throw hideErr;
+              await supabaseAdmin.from("level_changelog").insert({
+                event_type: "deleted",
+                level_name: name,
+                position: position !== undefined ? Number(position) : null,
+                details: { source: "builtin" },
+              });
               return ephemeralMessage(
-                `Deleted ${matches.length} level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}. Use /restore_level to undo.`,
+                `Hidden built-in level **${name}** from the list. Use \`/restore_level name:${name}\` to undo.`,
               );
             } catch (e) {
               console.error("delete_level failed", e);
@@ -458,6 +493,32 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             const name = String(opts.find((o) => o.name === "name")?.value ?? "").trim();
             try {
               const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+              // First try hidden built-in levels by name
+              if (name) {
+                const { data: hidden } = await supabaseAdmin
+                  .from("hidden_levels")
+                  .select("id, name")
+                  .ilike("name", name);
+                if (hidden && hidden.length > 0) {
+                  const { error: delErr } = await supabaseAdmin
+                    .from("hidden_levels")
+                    .delete()
+                    .in("id", hidden.map((h) => h.id));
+                  if (delErr) throw delErr;
+                  await supabaseAdmin.from("level_changelog").insert(
+                    hidden.map((h) => ({
+                      event_type: "restored",
+                      level_name: h.name,
+                      details: { source: "builtin" },
+                    })),
+                  );
+                  return ephemeralMessage(
+                    `Restored built-in level(s): ${hidden.map((h) => h.name).join(", ")}.`,
+                  );
+                }
+              }
+
               let q = supabaseAdmin
                 .from("custom_levels")
                 .select("id, name, position, deleted_at")
@@ -476,6 +537,14 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
                 .update({ deleted_at: null })
                 .in("id", ids);
               if (updErr) throw updErr;
+              await supabaseAdmin.from("level_changelog").insert(
+                matches.map((m) => ({
+                  event_type: "restored",
+                  level_name: m.name,
+                  position: m.position,
+                  details: { source: "custom" },
+                })),
+              );
               return ephemeralMessage(
                 `Restored ${matches.length} level(s): ${matches.map((m) => `#${m.position} ${m.name}`).join(", ")}.`,
               );
