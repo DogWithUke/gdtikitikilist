@@ -554,6 +554,94 @@ export const Route = createFileRoute("/api/public/discord-interactions")({
             }
           }
 
+          if (cmd === "edit_editors") {
+            const action = String(opts.find((o) => o.name === "action")?.value ?? "").trim().toLowerCase();
+            const name = String(opts.find((o) => o.name === "name")?.value ?? "").trim();
+            const role = String(opts.find((o) => o.name === "role")?.value ?? "").trim() || "helper";
+            const link = String(opts.find((o) => o.name === "link")?.value ?? "").trim() || "#";
+            const sortOrder = Number(opts.find((o) => o.name === "sort_order")?.value ?? 0);
+
+            if (!action) {
+              return ephemeralMessage(
+                "Usage: /edit_editors action:<add|remove|update|list> name:<name> [role:<owner|helper|trial|dev>] [link:<url>] [sort_order:<#>]",
+              );
+            }
+
+            try {
+              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+              if (action === "list") {
+                const { data } = await supabaseAdmin
+                  .from("list_editors")
+                  .select("name, role, link, sort_order")
+                  .order("sort_order", { ascending: true });
+                if (!data || data.length === 0) {
+                  return ephemeralMessage("No editors stored yet.");
+                }
+                return ephemeralMessage(
+                  "Editors:\n" +
+                    data.map((e) => `• [${e.role}] ${e.name} (${e.link}) — order ${e.sort_order}`).join("\n"),
+                );
+              }
+
+              if (!name) return ephemeralMessage("`name` is required for this action.");
+
+              if (action === "add") {
+                const { error } = await supabaseAdmin
+                  .from("list_editors")
+                  .insert({ name, role, link, sort_order: isNaN(sortOrder) ? 0 : sortOrder });
+                if (error) throw error;
+                return ephemeralMessage(`Added editor **${name}** (${role}).`);
+              }
+
+              if (action === "remove") {
+                const { data: matches, error: selErr } = await supabaseAdmin
+                  .from("list_editors")
+                  .select("id, name")
+                  .ilike("name", name);
+                if (selErr) throw selErr;
+                if (!matches || matches.length === 0) {
+                  return ephemeralMessage(`No editor named **${name}**.`);
+                }
+                const { error: delErr } = await supabaseAdmin
+                  .from("list_editors")
+                  .delete()
+                  .in("id", matches.map((m) => m.id));
+                if (delErr) throw delErr;
+                return ephemeralMessage(`Removed ${matches.length} editor(s) named **${name}**.`);
+              }
+
+              if (action === "update") {
+                const patch: { role?: string; link?: string; sort_order?: number } = {};
+                if (opts.find((o) => o.name === "role")) patch.role = role;
+                if (opts.find((o) => o.name === "link")) patch.link = link;
+                if (opts.find((o) => o.name === "sort_order")) patch.sort_order = sortOrder;
+                if (Object.keys(patch).length === 0) {
+                  return ephemeralMessage("Provide at least one of: role, link, sort_order.");
+                }
+                const { data: matches, error: selErr } = await supabaseAdmin
+                  .from("list_editors")
+                  .select("id")
+                  .ilike("name", name);
+                if (selErr) throw selErr;
+                if (!matches || matches.length === 0) {
+                  return ephemeralMessage(`No editor named **${name}**.`);
+                }
+                const { error: updErr } = await supabaseAdmin
+                  .from("list_editors")
+                  .update(patch)
+                  .in("id", matches.map((m) => m.id));
+                if (updErr) throw updErr;
+                return ephemeralMessage(`Updated ${matches.length} editor(s) named **${name}**.`);
+              }
+
+              return ephemeralMessage("Unknown action. Use add, remove, update, or list.");
+            } catch (e) {
+              console.error("edit_editors failed", e);
+              return ephemeralMessage("Could not edit editors. Try again.");
+            }
+          }
+
           return ephemeralMessage("Unknown command.");
         }
 

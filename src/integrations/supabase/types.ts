@@ -104,6 +104,33 @@ export type Database = {
         }
         Relationships: []
       }
+      list_editors: {
+        Row: {
+          created_at: string
+          id: string
+          link: string
+          name: string
+          role: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string
+          name: string
+          role: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string
+          name?: string
+          role?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       submissions: {
         Row: {
           created_at: string

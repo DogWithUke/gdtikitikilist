@@ -36,23 +36,6 @@ export default {
                         <Btn :disabled="!isActive" @click.native.prevent="onExport">Export</Btn>
                     </div>
                 </form>
-                <div class="changelog">
-                    <h2 style="margin-bottom:0.5rem">Changelog</h2>
-                    <p v-if="changelogLoading" class="type-label-md" style="color:#aaa">Loading…</p>
-                    <p v-else-if="changelog.length === 0" class="type-label-md" style="color:#aaa">No events yet.</p>
-                    <ul v-else class="changelog-list">
-                        <li v-for="ev in changelog" :key="ev.id" :class="'cl-' + ev.event_type">
-                            <span class="cl-badge">{{ ev.event_type }}</span>
-                            <span class="cl-name">{{ ev.level_name }}</span>
-                            <span v-if="ev.position" class="cl-pos">#{{ ev.position }}</span>
-                            <span v-if="ev.event_type === 'added' && ev.position" class="cl-meta">
-                                — pushed levels from #{{ ev.position }} down by 1
-                            </span>
-                            <span v-if="ev.details && ev.details.source" class="cl-src">[{{ ev.details.source }}]</span>
-                            <time class="cl-time">{{ formatDate(ev.occurred_at) }}</time>
-                        </li>
-                    </ul>
-                </div>
             </div>
             <section class="levels-container">
                 <div class="levels">
@@ -127,10 +110,8 @@ export default {
         useExtendedList: true,
         toasts: [],
         fileInput: undefined,
-        changelog: [],
-        changelogLoading: true,
     }),
-    async mounted() {
+    mounted() {
         // Create File Input
         this.fileInput = document.createElement('input');
         this.fileInput.type = 'file';
@@ -140,22 +121,9 @@ export default {
 
         // Load progress from local storage
         const roulette = JSON.parse(localStorage.getItem('roulette'));
-
-        if (roulette) {
-            this.levels = roulette.levels;
-            this.progression = roulette.progression;
-        }
-
-        // Load changelog
-        try {
-            const res = await fetch('/api/public/changelog');
-            const body = await res.json();
-            this.changelog = Array.isArray(body.events) ? body.events : [];
-        } catch (e) {
-            console.warn('Failed to load changelog', e);
-        } finally {
-            this.changelogLoading = false;
-        }
+        if (!roulette) return;
+        this.levels = roulette.levels;
+        this.progression = roulette.progression;
     },
     computed: {
         currentLevel() {
