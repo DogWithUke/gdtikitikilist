@@ -1,0 +1,98 @@
+.page-changelog {
+    padding: 2rem;
+    overflow-y: auto;
+}
+.page-changelog .changelog-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.page-changelog .changelog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.page-changelog .changelog-list li {
+    background-color: #1b314f;
+    color: white;
+    padding: 0.9rem 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-left: 4px solid #607d8b;
+}
+.page-changelog .changelog-list .cl-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+.page-changelog .changelog-list .cl-badge {
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: white;
+    background: #607d8b;
+}
+.page-changelog .changelog-list .cl-added { border-left-color: #2e7d32; }
+.page-changelog .changelog-list .cl-added .cl-badge { background: #2e7d32; }
+.page-changelog .changelog-list .cl-deleted { border-left-color: #c62828; }
+.page-changelog .changelog-list .cl-deleted .cl-badge { background: #c62828; }
+.page-changelog .changelog-list .cl-restored { border-left-color: #1565c0; }
+.page-changelog .changelog-list .cl-restored .cl-badge { background: #1565c0; }
+.page-changelog .changelog-list .cl-name { font-weight: 700; }
+.page-changelog .changelog-list .cl-pos { color: #b0c4de; }
+.page-changelog .changelog-list .cl-src { color: #8aa; font-size: 0.75rem; }
+.page-changelog .changelog-list .cl-meta { color: #b0c4de; font-size: 0.85rem; }
+.page-changelog .changelog-list .cl-time { color: #8aa; font-size: 0.75rem; }
+
+/* Clean mode toggle button */
+.clean-toggle {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    opacity: 0.55;
+    transition: opacity 150ms ease, transform 150ms ease;
+}
+.clean-toggle:hover {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+/* Clean mode site-wide simplifications */
+body.clean-mode header .nav__actions .nav__cta { display: none; }
+body.clean-mode header .logo p { display: none; }
+body.clean-mode .page-list .level-select,
+body.clean-mode .page-leaderboard .player-container {
+    background: transparent;
+}
+body.clean-mode .page-list .level-container,
+body.clean-mode .page-leaderboard .player-container,
+body.clean-mode .page-roulette .levels-container {
+    padding-inline: 1rem;
+}
+body.clean-mode .level .records,
+body.clean-mode .level .level-info > div:nth-child(n+4) {
+    opacity: 0.7;
+}
+body.clean-mode {
+    letter-spacing: 0.01em;
+}
