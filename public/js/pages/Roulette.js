@@ -127,8 +127,10 @@ export default {
         useExtendedList: true,
         toasts: [],
         fileInput: undefined,
+        changelog: [],
+        changelogLoading: true,
     }),
-    mounted() {
+    async mounted() {
         // Create File Input
         this.fileInput = document.createElement('input');
         this.fileInput.type = 'file';
@@ -139,12 +141,21 @@ export default {
         // Load progress from local storage
         const roulette = JSON.parse(localStorage.getItem('roulette'));
 
-        if (!roulette) {
-            return;
+        if (roulette) {
+            this.levels = roulette.levels;
+            this.progression = roulette.progression;
         }
 
-        this.levels = roulette.levels;
-        this.progression = roulette.progression;
+        // Load changelog
+        try {
+            const res = await fetch('/api/public/changelog');
+            const body = await res.json();
+            this.changelog = Array.isArray(body.events) ? body.events : [];
+        } catch (e) {
+            console.warn('Failed to load changelog', e);
+        } finally {
+            this.changelogLoading = false;
+        }
     },
     computed: {
         currentLevel() {
