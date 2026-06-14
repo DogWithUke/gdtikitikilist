@@ -1,7 +1,5 @@
 {
   "name": "gdtikitikilist",
   "compatibility_date": "2026-06-14",
-  "compatibility_flags": ["nodejs_compat"],
-
-  "main": "./dist/server/server.js"
+  "compatibility_flags": ["nodejs_compat"]
 }
